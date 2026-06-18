@@ -191,13 +191,35 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
                   {resource.exampleInput && (
                     <div className="border border-zinc-850 bg-zinc-950/40 rounded-2xl p-5 space-y-2.5">
                       <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest block">Entrada (Input)</span>
-                      <p className="text-sm text-zinc-400 whitespace-pre-wrap leading-relaxed">{resource.exampleInput}</p>
+                      {resource.exampleInput.startsWith('http://') || resource.exampleInput.startsWith('https://') ? (
+                        <div className="relative rounded-xl overflow-hidden border border-zinc-900 bg-zinc-950/80 flex items-center justify-center p-1.5">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={resource.exampleInput}
+                            alt="Ejemplo de entrada"
+                            className="max-h-96 w-full object-contain mx-auto rounded-lg"
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-sm text-zinc-400 whitespace-pre-wrap leading-relaxed">{resource.exampleInput}</p>
+                      )}
                     </div>
                   )}
                   {resource.exampleOutput && (
                     <div className="border border-zinc-850 bg-zinc-950/40 rounded-2xl p-5 space-y-2.5">
                       <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest block">Salida (Output)</span>
-                      <p className="text-sm text-zinc-400 whitespace-pre-wrap leading-relaxed">{resource.exampleOutput}</p>
+                      {resource.exampleOutput.startsWith('http://') || resource.exampleOutput.startsWith('https://') ? (
+                        <div className="relative rounded-xl overflow-hidden border border-zinc-900 bg-zinc-950/80 flex items-center justify-center p-1.5">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={resource.exampleOutput}
+                            alt="Ejemplo de salida"
+                            className="max-h-96 w-full object-contain mx-auto rounded-lg"
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-sm text-zinc-400 whitespace-pre-wrap leading-relaxed">{resource.exampleOutput}</p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -296,14 +318,14 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
                   {resource.files.map((file) => (
                     <div
                       key={file.id || file.fileUrl}
-                      className="border border-zinc-900 bg-zinc-950 rounded-2xl overflow-hidden aspect-video relative flex items-center justify-center"
+                      className="border border-zinc-900 bg-zinc-950 rounded-2xl overflow-hidden relative flex items-center justify-center p-2"
                     >
                       {file.fileType?.startsWith('image/') ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={file.fileUrl}
                           alt="Salida de muestra"
-                          className="w-full h-full object-cover"
+                          className="max-h-[500px] w-full object-contain rounded-xl"
                         />
                       ) : (
                         <div className="flex flex-col items-center gap-1.5 text-zinc-400 p-4 text-center">

@@ -32,6 +32,10 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
   const [modelInput, setModelInput] = useState('');
   const [exampleInput, setExampleInput] = useState('');
   const [exampleOutput, setExampleOutput] = useState('');
+  const [inputType, setInputType] = useState<'text' | 'image'>('text');
+  const [outputType, setOutputType] = useState<'text' | 'image'>('text');
+  const [uploadingInput, setUploadingInput] = useState(false);
+  const [uploadingOutput, setUploadingOutput] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [files, setFiles] = useState<any[]>([]);
@@ -56,8 +60,24 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
       setStatus(initialData.status || 'published');
       setCategoryId(initialData.categoryId || '');
       setCompatibleModels(initialData.compatibleModels || []);
-      setExampleInput(initialData.exampleInput || '');
-      setExampleOutput(initialData.exampleOutput || '');
+      
+      const valInput = initialData.exampleInput || '';
+      const valOutput = initialData.exampleOutput || '';
+      setExampleInput(valInput);
+      setExampleOutput(valOutput);
+
+      if (valInput.startsWith('http://') || valInput.startsWith('https://')) {
+        setInputType('image');
+      } else {
+        setInputType('text');
+      }
+
+      if (valOutput.startsWith('http://') || valOutput.startsWith('https://')) {
+        setOutputType('image');
+      } else {
+        setOutputType('text');
+      }
+
       setTags(initialData.tags || []);
       setFiles(initialData.files || []);
     }
@@ -138,6 +158,42 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
       setErrorMsg(err.message || 'Error al subir el archivo.');
     } finally {
       setUploadingFile(false);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'input' | 'output') => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    const setUploading = field === 'input' ? setUploadingInput : setUploadingOutput;
+    const setValue = field === 'input' ? setExampleInput : setExampleOutput;
+
+    setUploading(true);
+    setErrorMsg(null);
+
+    const file = fileList[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/v1/storage/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const payload = await res.json();
+      if (!res.ok) {
+        throw new Error(payload.error?.message || 'Error al subir la imagen.');
+      }
+
+      if (payload.data?.fileUrl) {
+        setValue(payload.data.fileUrl);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || 'Error al subir la imagen.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -371,26 +427,150 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
 
       {/* Ejemplos de Entrada y Salida */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-zinc-850">
+        {/* Entrada */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Ejemplo de Entrada (Input)</label>
-          <textarea
-            value={exampleInput}
-            onChange={(e) => setExampleInput(e.target.value)}
-            placeholder="Ej. Tema: Alimentación saludable, Keyword: Dieta keto"
-            rows={4}
-            className="w-full px-4 py-3 bg-zinc-950/70 border border-zinc-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-zinc-100 placeholder-zinc-650 outline-none text-sm transition-all resize-none"
-          />
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Ejemplo de Entrada (Input)</label>
+            <div className="flex bg-zinc-950 border border-zinc-850 rounded-lg p-0.5 text-[10px] font-semibold">
+              <button
+                type="button"
+                onClick={() => setInputType('text')}
+                className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                  inputType === 'text' ? 'bg-purple-650 text-white' : 'text-zinc-500 hover:text-zinc-350'
+                }`}
+              >
+                Texto
+              </button>
+              <button
+                type="button"
+                onClick={() => setInputType('image')}
+                className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                  inputType === 'image' ? 'bg-purple-650 text-white' : 'text-zinc-500 hover:text-zinc-350'
+                }`}
+              >
+                Imagen
+              </button>
+            </div>
+          </div>
+
+          {inputType === 'text' ? (
+            <textarea
+              value={exampleInput}
+              onChange={(e) => setExampleInput(e.target.value)}
+              placeholder="Ej. Tema: Alimentación saludable, Keyword: Dieta keto"
+              rows={4}
+              className="w-full px-4 py-3 bg-zinc-950/70 border border-zinc-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-zinc-100 placeholder-zinc-650 outline-none text-sm transition-all resize-none animate-fadeIn"
+            />
+          ) : (
+            exampleInput && (exampleInput.startsWith('http://') || exampleInput.startsWith('https://')) ? (
+              <div className="relative border border-zinc-850 bg-zinc-950/40 rounded-2xl overflow-hidden h-32 flex items-center justify-center p-2 group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={exampleInput}
+                  alt="Entrada de ejemplo"
+                  className="max-h-full max-w-full object-contain rounded-xl"
+                />
+                <button
+                  type="button"
+                  onClick={() => setExampleInput('')}
+                  className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black text-white rounded-full transition-all cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <label className="relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-zinc-800 hover:border-purple-500/50 hover:bg-purple-950/5 rounded-2xl cursor-pointer transition-all h-32 group">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'input')}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={uploadingInput}
+                />
+                {uploadingInput ? (
+                  <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
+                ) : (
+                  <>
+                    <Upload className="h-6 w-6 text-zinc-500 group-hover:text-purple-400 transition-colors mb-1.5" />
+                    <span className="text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors text-center font-medium">Subir Imagen de Entrada</span>
+                  </>
+                )}
+              </label>
+            )
+          )}
         </div>
 
+        {/* Salida */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Ejemplo de Salida (Output)</label>
-          <textarea
-            value={exampleOutput}
-            onChange={(e) => setExampleOutput(e.target.value)}
-            placeholder="Ej. Generará una tabla comparativa con 5 alimentos..."
-            rows={4}
-            className="w-full px-4 py-3 bg-zinc-950/70 border border-zinc-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-zinc-100 placeholder-zinc-650 outline-none text-sm transition-all resize-none"
-          />
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <label className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">Ejemplo de Salida (Output)</label>
+            <div className="flex bg-zinc-950 border border-zinc-850 rounded-lg p-0.5 text-[10px] font-semibold">
+              <button
+                type="button"
+                onClick={() => setOutputType('text')}
+                className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                  outputType === 'text' ? 'bg-purple-650 text-white' : 'text-zinc-500 hover:text-zinc-350'
+                }`}
+              >
+                Texto
+              </button>
+              <button
+                type="button"
+                onClick={() => setOutputType('image')}
+                className={`px-2 py-1 rounded-md transition-all cursor-pointer ${
+                  outputType === 'image' ? 'bg-purple-650 text-white' : 'text-zinc-500 hover:text-zinc-350'
+                }`}
+              >
+                Imagen
+              </button>
+            </div>
+          </div>
+
+          {outputType === 'text' ? (
+            <textarea
+              value={exampleOutput}
+              onChange={(e) => setExampleOutput(e.target.value)}
+              placeholder="Ej. Generará una tabla comparativa con 5 alimentos..."
+              rows={4}
+              className="w-full px-4 py-3 bg-zinc-950/70 border border-zinc-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-zinc-100 placeholder-zinc-650 outline-none text-sm transition-all resize-none animate-fadeIn"
+            />
+          ) : (
+            exampleOutput && (exampleOutput.startsWith('http://') || exampleOutput.startsWith('https://')) ? (
+              <div className="relative border border-zinc-850 bg-zinc-950/40 rounded-2xl overflow-hidden h-32 flex items-center justify-center p-2 group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={exampleOutput}
+                  alt="Salida de ejemplo"
+                  className="max-h-full max-w-full object-contain rounded-xl"
+                />
+                <button
+                  type="button"
+                  onClick={() => setExampleOutput('')}
+                  className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black text-white rounded-full transition-all cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <label className="relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-zinc-800 hover:border-purple-500/50 hover:bg-purple-950/5 rounded-2xl cursor-pointer transition-all h-32 group">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'output')}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={uploadingOutput}
+                />
+                {uploadingOutput ? (
+                  <Loader2 className="h-6 w-6 animate-spin text-purple-400" />
+                ) : (
+                  <>
+                    <Upload className="h-6 w-6 text-zinc-500 group-hover:text-purple-400 transition-colors mb-1.5" />
+                    <span className="text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors text-center font-medium">Subir Imagen de Salida</span>
+                  </>
+                )}
+              </label>
+            )
+          )}
         </div>
       </div>
 
@@ -422,14 +602,14 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
           {files.map((file, idx) => (
             <div
               key={idx}
-              className="relative border border-zinc-800 bg-zinc-950/30 rounded-2xl overflow-hidden h-32 flex items-center justify-center group"
+              className="relative border border-zinc-800 bg-zinc-950/30 rounded-2xl overflow-hidden h-32 flex items-center justify-center group p-1.5"
             >
               {file.fileType?.startsWith('image/') ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={file.fileUrl}
                   alt="Previsualización"
-                  className="h-full w-full object-cover"
+                  className="max-h-full max-w-full object-contain rounded-xl"
                 />
               ) : (
                 <div className="flex flex-col items-center gap-1.5 text-zinc-400">
