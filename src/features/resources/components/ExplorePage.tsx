@@ -28,6 +28,14 @@ interface Resource {
   commentsCount: number;
   tags: string[];
   createdAt: string;
+  exampleInput?: string | null;
+  exampleOutput?: string | null;
+  files?: Array<{
+    id?: string;
+    fileUrl: string;
+    fileType?: string | null;
+    fileSize?: number | null;
+  }> | null;
 }
 
 export default function ExplorePage() {

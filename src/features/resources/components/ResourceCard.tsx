@@ -21,6 +21,13 @@ export interface ResourceCardProps {
     commentsCount: number;
     tags: string[];
     createdAt: string | Date;
+    exampleOutput?: string | null;
+    files?: Array<{
+      id?: string;
+      fileUrl: string;
+      fileType?: string | null;
+      fileSize?: number | null;
+    }> | null;
   };
 }
 
@@ -70,6 +77,24 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
     month: 'short',
     year: 'numeric',
   });
+
+  // Buscar URL de imagen en exampleOutput o archivos adjuntos
+  let imageUrl: string | null = null;
+  const isImage = (url?: string | null) => {
+    if (!url) return false;
+    return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/');
+  };
+
+  if (isImage(resource.exampleOutput)) {
+    imageUrl = resource.exampleOutput!;
+  } else if (resource.files && resource.files.length > 0) {
+    const imageFile = resource.files.find(f => f.fileType?.startsWith('image/') || isImage(f.fileUrl));
+    if (imageFile) {
+      imageUrl = imageFile.fileUrl;
+    }
+  }
+
+  const showImageHeader = imageUrl || resource.type === 'prompt_image';
 
   // Verificar si el usuario actual ha dado like a este recurso
   useEffect(() => {
@@ -121,6 +146,34 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
   return (
     <div className="group bg-zinc-900/40 border border-zinc-800/80 hover:border-zinc-700 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 hover:scale-[1.01] hover:shadow-xl hover:shadow-purple-950/5">
       <div className="space-y-4">
+        {/* Vista previa de imagen */}
+        {showImageHeader && (
+          <Link
+            href={`/resource/${resource.slug}`}
+            className="block relative w-full h-44 overflow-hidden rounded-xl bg-zinc-950 border border-zinc-850 shadow-inner group/preview"
+          >
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={imageUrl}
+                alt={resource.title}
+                className="object-cover w-full h-full group-hover/preview:scale-[1.03] transition-transform duration-500"
+                loading="lazy"
+              />
+            ) : (
+              <div className="relative w-full h-full bg-gradient-to-br from-purple-950/30 via-zinc-900/80 to-zinc-950 flex flex-col items-center justify-center overflow-hidden">
+                <div className="absolute -top-10 -left-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all duration-500" />
+                <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl group-hover:bg-indigo-500/20 transition-all duration-500" />
+                
+                <ImageIcon className="h-7 w-7 text-zinc-650 group-hover:text-purple-400 group-hover:scale-105 transition-all duration-500 mb-1.5 relative z-10" />
+                <span className="text-[10px] font-semibold text-zinc-500 tracking-wider uppercase relative z-10 group-hover:text-zinc-400 transition-colors">
+                  Sin vista previa
+                </span>
+              </div>
+            )}
+          </Link>
+        )}
+
         {/* Tipo de recurso y fecha */}
         <div className="flex justify-between items-center text-xs">
           <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full border ${config.color} font-medium`}>

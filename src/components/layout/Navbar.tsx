@@ -298,6 +298,15 @@ export default function Navbar() {
 
           {/* Menú Móvil Botón */}
           <div className="flex items-center sm:hidden">
+            {session && (
+              <Link
+                href="/resource/new"
+                className="p-2 mr-2 text-zinc-450 hover:text-white bg-zinc-900/50 hover:bg-zinc-900 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition-all"
+                title="Publicar Prompt"
+              >
+                <Plus className="h-4 w-4" />
+              </Link>
+            )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 focus:outline-none"
@@ -367,6 +376,16 @@ export default function Navbar() {
             </Link>
           )}
         </div>
+      )}
+      {/* Botón de Acción Flotante (FAB) para Móviles */}
+      {session && (
+        <Link
+          href="/resource/new"
+          className="sm:hidden fixed bottom-6 right-6 z-40 flex items-center justify-center h-14 w-14 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xl shadow-purple-950/40 hover:scale-105 active:scale-95 transition-all border border-purple-500/20"
+          title="Publicar Prompt"
+        >
+          <Plus className="h-6 w-6" />
+        </Link>
       )}
     </nav>
   );
