@@ -5,7 +5,19 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import Navbar from '@/components/layout/Navbar';
 import ResourceCard from '@/features/resources/components/ResourceCard';
-import { Sparkles, ArrowRight, ShieldCheck, Zap, Heart } from 'lucide-react';
+import StarryBackground from '@/components/ui/StarryBackground';
+import { 
+  Sparkles, 
+  ArrowRight, 
+  ShieldCheck, 
+  Zap, 
+  Heart, 
+  Compass, 
+  Copy, 
+  Share2, 
+  Layers, 
+  Users 
+} from 'lucide-react';
 
 interface Resource {
   id: string;
@@ -37,6 +49,9 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-100 overflow-x-hidden relative">
+      {/* Fondo de estrellas animadas estilo Antigravity */}
+      <StarryBackground />
+
       {/* Luces decorativas ambientales de fondo */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] -z-10 pointer-events-none" />
       <div className="absolute top-[800px] right-0 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
@@ -44,18 +59,13 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24 text-center space-y-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-950/20 border border-purple-900/30 rounded-full text-xs text-purple-400 font-semibold mb-2 animate-bounce">
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>Fase 1 MVP ya disponible</span>
-        </div>
-
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24 text-center space-y-6 relative z-10">
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent max-w-4xl mx-auto leading-none">
           El Hub de Prompts de IA de Próxima Generación
         </h1>
 
-        <p className="text-sm sm:text-base text-zinc-400 max-w-xl mx-auto leading-relaxed">
-          Encuentra, comparte y optimiza prompts para ChatGPT, Midjourney, Claude y más. Únete a creadores que impulsan los límites del diseño y la ingeniería de prompts.
+        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+          Encuentra, comparte y optimiza prompts profesionales para ChatGPT, Midjourney, Claude y más. Únete a miles de creadores de contenido, desarrolladores y entusiastas de la Inteligencia Artificial.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6">
@@ -75,41 +85,109 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Características */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-zinc-900">
-        <div className="bg-zinc-900/20 border border-zinc-900 p-6 rounded-2xl space-y-3">
+      {/* Características Clave */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-zinc-900/60 relative z-10">
+        <div className="bg-zinc-900/20 border border-zinc-900 p-6 rounded-2xl space-y-3 backdrop-blur-sm hover:border-purple-500/20 hover:bg-zinc-900/30 transition-all duration-300">
           <div className="p-2.5 bg-purple-500/10 rounded-xl border border-purple-500/20 text-purple-400 w-fit">
             <Zap className="h-5 w-5" />
           </div>
           <h3 className="font-semibold text-white">Velocidad Instantánea</h3>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Busca y filtra entre miles de prompts con nuestra búsqueda optimizada. Copia código en un segundo.
+            Busca y filtra entre miles de prompts con nuestra búsqueda optimizada y descarga o copia código en un segundo.
           </p>
         </div>
 
-        <div className="bg-zinc-900/20 border border-zinc-900 p-6 rounded-2xl space-y-3">
+        <div className="bg-zinc-900/20 border border-zinc-900 p-6 rounded-2xl space-y-3 backdrop-blur-sm hover:border-emerald-500/20 hover:bg-zinc-900/30 transition-all duration-300">
           <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 w-fit">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <h3 className="font-semibold text-white">Prompts Probados</h3>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Cada recurso cuenta con ejemplos estructurados de entrada y salida, asegurando su correcto funcionamiento.
+            Cada recurso cuenta con ejemplos estructurados de entrada y salida, asegurando su correcto funcionamiento y compatibilidad.
           </p>
         </div>
 
-        <div className="bg-zinc-900/20 border border-zinc-900 p-6 rounded-2xl space-y-3">
+        <div className="bg-zinc-900/20 border border-zinc-900 p-6 rounded-2xl space-y-3 backdrop-blur-sm hover:border-blue-500/20 hover:bg-zinc-900/30 transition-all duration-300">
           <div className="p-2.5 bg-blue-500/10 rounded-xl border border-blue-500/20 text-blue-400 w-fit">
             <Heart className="h-5 w-5" />
           </div>
           <h3 className="font-semibold text-white">Comunidad Activa</h3>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Muestra tus creaciones en tu perfil público de creador y recibe feedback en tus estadísticas.
+            Muestra tus creaciones en tu perfil público de creador, recibe feedback y sigue de cerca a otros expertos de la industria.
           </p>
         </div>
       </section>
 
+      {/* Sección: Cómo Funciona */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-zinc-900/60 relative z-10 space-y-12">
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Cómo funciona PromptHub</h2>
+          <p className="text-xs sm:text-sm text-zinc-400">
+            PromptHub está diseñado para que encuentres, utilices y compartas soluciones de IA en segundos de forma intuitiva.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-4 text-center p-6 bg-zinc-950/40 border border-zinc-900/80 rounded-2xl backdrop-blur-sm">
+            <div className="mx-auto p-4 bg-purple-950/20 border border-purple-900/30 text-purple-400 rounded-full w-14 h-14 flex items-center justify-center">
+              <Compass className="h-6 w-6" />
+            </div>
+            <h3 className="font-semibold text-sm text-white">1. Descubre e Inspírate</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Explora una biblioteca en constante crecimiento de prompts validados por la comunidad, clasificados por categorías, modelos y tipos de tareas.
+            </p>
+          </div>
+
+          <div className="space-y-4 text-center p-6 bg-zinc-950/40 border border-zinc-900/80 rounded-2xl backdrop-blur-sm">
+            <div className="mx-auto p-4 bg-indigo-950/20 border border-indigo-900/30 text-indigo-400 rounded-full w-14 h-14 flex items-center justify-center">
+              <Copy className="h-6 w-6" />
+            </div>
+            <h3 className="font-semibold text-sm text-white">2. Copia y Adapta</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Copia el prompt con un solo clic o personaliza sus variables integradas para adaptarlo exactamente a tus necesidades específicas.
+            </p>
+          </div>
+
+          <div className="space-y-4 text-center p-6 bg-zinc-950/40 border border-zinc-900/80 rounded-2xl backdrop-blur-sm">
+            <div className="mx-auto p-4 bg-emerald-950/20 border border-emerald-900/30 text-emerald-400 rounded-full w-14 h-14 flex items-center justify-center">
+              <Share2 className="h-6 w-6" />
+            </div>
+            <h3 className="font-semibold text-sm text-white">3. Comparte y Destaca</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              Publica tus propios prompts estructurados, recibe feedback directo de otros creadores y haz crecer tu reputación en la comunidad de IA.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección: Estadísticas */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        <div className="bg-gradient-to-r from-purple-950/10 via-zinc-900/20 to-indigo-950/10 border border-zinc-900 rounded-2xl p-8 backdrop-blur-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-zinc-900">
+            <div className="space-y-1.5 py-4 sm:py-0">
+              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                +10,000
+              </p>
+              <p className="text-xs font-medium text-zinc-450 uppercase tracking-wider">Prompts Copiados</p>
+            </div>
+            <div className="space-y-1.5 py-4 sm:py-0">
+              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
+                +5,000
+              </p>
+              <p className="text-xs font-medium text-zinc-450 uppercase tracking-wider">Creadores de Prompts</p>
+            </div>
+            <div className="space-y-1.5 py-4 sm:py-0">
+              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-emerald-400 to-purple-400 bg-clip-text text-transparent">
+                100%
+              </p>
+              <p className="text-xs font-medium text-zinc-450 uppercase tracking-wider">Gratuito y Abierto</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Prompts Destacados */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8 relative z-10">
         <div className="flex justify-between items-end">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold text-white">Prompts Destacados</h2>
@@ -150,11 +228,82 @@ export default function LandingPage() {
         )}
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-900 bg-zinc-950 py-10 mt-auto text-center text-xs text-zinc-550 space-y-2">
-        <p>© 2026 PromptHub. Todos los derechos reservados.</p>
-        <p>Construido con Next.js 16 + Supabase Onion Architecture.</p>
+      {/* Banner de Registro Secundario (CTA) */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 w-full">
+        <div className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 border border-purple-500/20 rounded-3xl p-8 sm:p-12 text-center space-y-6 backdrop-blur-sm">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">¿Listo para potenciar tu productividad?</h2>
+          <p className="text-xs sm:text-sm text-zinc-350 max-w-xl mx-auto leading-relaxed">
+            Únete a PromptHub hoy mismo de manera gratuita. Guarda tus prompts favoritos, sigue a tus creadores preferidos y publica tus mejores flujos de trabajo con inteligencia artificial.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-3">
+            <Link
+              href="/login"
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold text-xs shadow-lg shadow-purple-950/20 hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto cursor-pointer"
+            >
+              Crear Cuenta Gratis
+            </Link>
+            <Link
+              href="/explore"
+              className="px-6 py-3 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-white rounded-xl font-semibold text-xs hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto cursor-pointer"
+            >
+              Explorar Biblioteca
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Profesional */}
+      <footer className="border-t border-zinc-900 bg-zinc-950/80 backdrop-blur-md pt-16 pb-8 mt-auto relative z-10 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-purple-650/10 rounded-lg border border-purple-500/20 text-purple-400">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <span className="font-bold text-base text-white">PromptHub</span>
+            </div>
+            <p className="text-xs text-zinc-450 leading-relaxed">
+              La plataforma abierta donde creadores y desarrolladores comparten, descubren y optimizan prompts para los modelos de Inteligencia Artificial más avanzados.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-xs text-white uppercase tracking-wider mb-4">Descubrir</h4>
+            <ul className="space-y-2.5 text-xs text-zinc-400">
+              <li><Link href="/explore" className="hover:text-white transition-colors">Explorar Prompts</Link></li>
+              <li><Link href="/explore?type=prompt_llm" className="hover:text-white transition-colors">Modelos de Lenguaje</Link></li>
+              <li><Link href="/explore?type=prompt_image" className="hover:text-white transition-colors">Generación de Imágenes</Link></li>
+              <li><Link href="/explore?type=agent" className="hover:text-white transition-colors">Agentes de IA</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-xs text-white uppercase tracking-wider mb-4">Comunidad</h4>
+            <ul className="space-y-2.5 text-xs text-zinc-400">
+              <li><Link href="/feed" className="hover:text-white transition-colors">Mi Feed</Link></li>
+              <li><Link href="/login" className="hover:text-white transition-colors">Únete Gratis</Link></li>
+              <li><a href="#" className="hover:text-white transition-colors">Creadores Destacados</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Eventos y Retos</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-xs text-white uppercase tracking-wider mb-4">Recursos y Soporte</h4>
+            <ul className="space-y-2.5 text-xs text-zinc-400">
+              <li><a href="#" className="hover:text-white transition-colors">Documentación de Prompts</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Ingeniería de Prompts</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contacto</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-zinc-900 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-zinc-500">
+          <p>© {new Date().getFullYear()} PromptHub. Todos los derechos reservados.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-white transition-colors">Términos de Servicio</a>
+            <a href="#" className="hover:text-white transition-colors">Política de Privacidad</a>
+            <a href="#" className="hover:text-white transition-colors">Cookies</a>
+          </div>
+        </div>
       </footer>
     </div>
   );
 }
+
