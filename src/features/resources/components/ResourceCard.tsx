@@ -153,13 +153,25 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
             className="block relative w-full aspect-video overflow-hidden rounded-xl bg-zinc-950 border border-zinc-850 shadow-inner group/preview"
           >
             {imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={imageUrl}
-                alt={resource.title}
-                className="object-cover w-full h-full group-hover/preview:scale-[1.03] transition-transform duration-500"
-                loading="lazy"
-              />
+              <>
+                {/* Fondo difuminado para rellenar los bordes con los colores de la imagen */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageUrl}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover blur-lg opacity-45 scale-105 pointer-events-none select-none"
+                />
+                <div className="absolute inset-0 bg-black/10 backdrop-brightness-[0.85]" />
+
+                {/* Imagen principal centrada completa sin recortes */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageUrl}
+                  alt={resource.title}
+                  className="relative z-10 object-contain w-full h-full mx-auto group-hover/preview:scale-[1.015] transition-transform duration-500"
+                  loading="lazy"
+                />
+              </>
             ) : (
               <div className="relative w-full h-full bg-gradient-to-br from-purple-950/30 via-zinc-900/80 to-zinc-950 flex flex-col items-center justify-center overflow-hidden">
                 <div className="absolute -top-10 -left-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all duration-500" />
