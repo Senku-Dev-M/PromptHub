@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import ResourceCard from './ResourceCard';
 import Navbar from '@/components/layout/Navbar';
-import { Search, Sparkles, Image as ImageIcon, Video, Box, Layers, SlidersHorizontal, Loader2 } from 'lucide-react';
+import { Search, Sparkles, Image as ImageIcon, Video, Box, Layers, SlidersHorizontal, Loader2, ChevronDown } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
@@ -43,6 +43,7 @@ export default function ExplorePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
   const [newCount, setNewCount] = useState(0);
+  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
   const [offset, setOffset] = useState(0);
   const limit = 12;
@@ -155,99 +156,116 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* Controles de Filtros */}
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* Filtros Lateral (Escritorio) o superiores (Móvil) */}
-          <aside className="w-full lg:w-64 flex-shrink-0 space-y-6 bg-zinc-900/10 border border-zinc-900 backdrop-blur-sm p-6 rounded-2xl">
-            <div className="flex items-center gap-2 border-b border-zinc-900 pb-3">
-              <SlidersHorizontal className="h-4 w-4 text-purple-400" />
-              <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Filtros</h2>
-            </div>
-
-            {/* Tipos */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold text-zinc-300">Tipo de Recurso</h3>
-              <div className="flex flex-col gap-1 text-sm">
-                <button
-                  onClick={() => setSelectedType('')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedType === '' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <Layers className="h-4 w-4" />
-                  <span>Todos</span>
-                </button>
-                <button
-                  onClick={() => setSelectedType('prompt_llm')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedType === 'prompt_llm' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span>Prompts LLM</span>
-                </button>
-                <button
-                  onClick={() => setSelectedType('prompt_image')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedType === 'prompt_image' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  <span>Imágenes</span>
-                </button>
-                <button
-                  onClick={() => setSelectedType('prompt_video')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedType === 'prompt_video' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <Video className="h-4 w-4" />
-                  <span>Videos</span>
-                </button>
-                <button
-                  onClick={() => setSelectedType('agent')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedType === 'agent' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <Box className="h-4 w-4" />
-                  <span>Agentes</span>
-                </button>
-                <button
-                  onClick={() => setSelectedType('workflow')}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedType === 'workflow' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  <Box className="h-4 w-4" />
-                  <span>Workflows</span>
-                </button>
+          <aside className="w-full lg:w-64 flex-shrink-0 bg-zinc-900/10 border border-zinc-900 backdrop-blur-sm p-4 lg:p-6 rounded-2xl transition-all duration-200">
+            <div 
+              onClick={() => setShowFiltersMobile(!showFiltersMobile)}
+              className={`flex items-center justify-between cursor-pointer lg:cursor-default ${
+                showFiltersMobile ? 'border-b border-zinc-900 pb-3' : 'lg:border-b lg:border-zinc-900 lg:pb-3'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4 text-purple-400" />
+                <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Filtros</h2>
+                {(selectedType || selectedCategory) && (
+                  <span className="flex h-1.5 w-1.5 rounded-full bg-purple-500 animate-pulse" />
+                )}
+              </div>
+              <div className="lg:hidden flex items-center text-zinc-500 hover:text-zinc-350 transition-colors">
+                <span className="text-[10px] font-semibold mr-1 uppercase">
+                  {showFiltersMobile ? 'Ocultar' : 'Mostrar'}
+                </span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${showFiltersMobile ? 'rotate-180' : ''}`} />
               </div>
             </div>
 
-            {/* Categorías */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold text-zinc-300">Categorías</h3>
-              <div className="flex flex-col gap-1 text-sm">
-                <button
-                  onClick={() => setSelectedCategory('')}
-                  className={`px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                    selectedCategory === '' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                  }`}
-                >
-                  Todas las categorías
-                </button>
-                {categories.map((cat) => (
+            <div className={`${showFiltersMobile ? 'block' : 'hidden'} lg:block space-y-6 pt-4 lg:pt-6`}>
+              {/* Tipos */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-semibold text-zinc-300">Tipo de Recurso</h3>
+                <div className="flex flex-col gap-1 text-sm">
                   <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-2 rounded-xl text-left transition-colors truncate cursor-pointer ${
-                      selectedCategory === cat.id ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    onClick={() => setSelectedType('')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedType === '' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
                     }`}
                   >
-                    {cat.name}
+                    <Layers className="h-4 w-4" />
+                    <span>Todos</span>
                   </button>
-                ))}
+                  <button
+                    onClick={() => setSelectedType('prompt_llm')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedType === 'prompt_llm' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    }`}
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    <span>Prompts LLM</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedType('prompt_image')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedType === 'prompt_image' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    }`}
+                  >
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Imágenes</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedType('prompt_video')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedType === 'prompt_video' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    }`}
+                  >
+                    <Video className="h-4 w-4" />
+                    <span>Videos</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedType('agent')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedType === 'agent' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    }`}
+                  >
+                    <Box className="h-4 w-4" />
+                    <span>Agentes</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedType('workflow')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedType === 'workflow' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    }`}
+                  >
+                    <Box className="h-4 w-4" />
+                    <span>Workflows</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Categorías */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-semibold text-zinc-300">Categorías</h3>
+                <div className="flex flex-col gap-1 text-sm">
+                  <button
+                    onClick={() => setSelectedCategory('')}
+                    className={`px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                      selectedCategory === '' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                    }`}
+                  >
+                    Todas las categorías
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`px-3 py-2 rounded-xl text-left transition-colors truncate cursor-pointer ${
+                        selectedCategory === cat.id ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </aside>
