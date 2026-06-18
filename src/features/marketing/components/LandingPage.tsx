@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import Navbar from '@/components/layout/Navbar';
 import ResourceCard from '@/features/resources/components/ResourceCard';
-import StarryBackground from '@/components/ui/StarryBackground';
+import Lightfall from '@/components/ui/Lightfall';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -49,41 +49,62 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-100 overflow-x-hidden relative">
-      {/* Fondo de estrellas animadas estilo Antigravity */}
-      <StarryBackground />
-
       {/* Luces decorativas ambientales de fondo */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] -z-10 pointer-events-none" />
       <div className="absolute top-[800px] right-0 w-[400px] h-[400px] bg-blue-600/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
 
       <Navbar />
 
-      {/* Hero Section */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24 text-center space-y-6 relative z-10">
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent max-w-4xl mx-auto leading-none">
-          El Hub de Prompts de IA de Próxima Generación
-        </h1>
-
-        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-          Encuentra, comparte y optimiza prompts profesionales para ChatGPT, Midjourney, Claude y más. Únete a miles de creadores de contenido, desarrolladores y entusiastas de la Inteligencia Artificial.
-        </p>
-
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6">
-          <Link
-            href="/explore"
-            className="group flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-purple-650 to-indigo-650 hover:from-purple-550 hover:to-indigo-550 text-white rounded-xl font-semibold text-sm shadow-xl shadow-purple-950/20 hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto text-center justify-center cursor-pointer"
-          >
-            <span>Explorar Prompts</span>
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-          <Link
-            href="/login"
-            className="px-6 py-3.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-white rounded-xl font-semibold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto text-center justify-center cursor-pointer"
-          >
-            Comenzar Gratis
-          </Link>
+      {/* Hero Container con efecto de fondo Lightfall */}
+      <div className="relative overflow-hidden w-full border-b border-zinc-900/60">
+        <div className="absolute inset-0 -z-10">
+          <Lightfall
+            colors={['#A6C8FF', '#5227FF', '#FF9FFC']}
+            backgroundColor="#090514"
+            speed={0.25}
+            streakCount={4}
+            streakWidth={1.0}
+            streakLength={1.4}
+            glow={1.1}
+            density={0.65}
+            twinkle={0.8}
+            zoom={2.2}
+            backgroundGlow={0.25}
+            opacity={0.8}
+            mouseInteraction={true}
+            mouseStrength={0.5}
+            mouseRadius={1.0}
+          />
         </div>
-      </header>
+        {/* Desvanecido suave al final del hero */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-950 to-transparent pointer-events-none z-10" />
+
+        <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pt-32 sm:pb-28 text-center space-y-6 relative z-20">
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent max-w-4xl mx-auto leading-none">
+            El Hub de Prompts de IA de Próxima Generación
+          </h1>
+
+          <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+            Encuentra, comparte y optimiza prompts profesionales para ChatGPT, Midjourney, Claude y más. Únete a miles de creadores de contenido, desarrolladores y entusiastas de la Inteligencia Artificial.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-6">
+            <Link
+              href="/explore"
+              className="group flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-purple-650 to-indigo-650 hover:from-purple-550 hover:to-indigo-550 text-white rounded-xl font-semibold text-sm shadow-xl shadow-purple-950/20 hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto text-center justify-center cursor-pointer"
+            >
+              <span>Explorar Prompts</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <Link
+              href="/login"
+              className="px-6 py-3.5 bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-white rounded-xl font-semibold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all w-full sm:w-auto text-center justify-center cursor-pointer"
+            >
+              Comenzar Gratis
+            </Link>
+          </div>
+        </header>
+      </div>
 
       {/* Características Clave */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-zinc-900/60 relative z-10">
