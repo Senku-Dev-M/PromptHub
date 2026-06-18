@@ -310,7 +310,7 @@ export default function Navbar() {
 
       {/* Menú Móvil Panel */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-zinc-900 bg-zinc-950/95 py-3 px-4 space-y-3">
+        <div className="sm:hidden absolute top-16 left-0 right-0 border-b border-zinc-900 bg-zinc-950 py-4 px-4 space-y-3 shadow-2xl z-50">
           <Link
             href="/explore"
             onClick={() => setMobileMenuOpen(false)}

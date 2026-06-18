@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
 import { SupabaseStorageService } from '@/backend/infrastructure/storage/SupabaseStorageService';
-import sharp from 'sharp';
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -43,6 +42,7 @@ export async function POST(request: Request) {
     // Si es una imagen, la optimizamos con sharp (redimensionar a un ancho máx. de 1200px y convertir a WebP 80% calidad)
     if (file.type.startsWith('image/')) {
       try {
+        const { default: sharp } = await import('sharp');
         const image = sharp(buffer);
         const metadata = await image.metadata();
         

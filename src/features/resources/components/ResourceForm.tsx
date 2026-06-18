@@ -450,9 +450,9 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
       </div>
 
       {/* Botones de acción */}
-      <div className="pt-6 border-t border-zinc-850 flex items-center justify-between gap-4">
+      <div className="pt-6 border-t border-zinc-850 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
         {/* Selector de estado */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
           <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Estado:</label>
           <div className="flex bg-zinc-950/80 border border-zinc-850 rounded-xl p-1 text-xs">
             <button
@@ -476,18 +476,18 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 w-full sm:w-auto justify-end">
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-5 py-2.5 bg-zinc-950/60 hover:bg-zinc-900 border border-zinc-850 text-zinc-300 hover:text-white rounded-xl text-sm font-medium transition-all cursor-pointer"
+            className="flex-1 sm:flex-none px-5 py-2.5 bg-zinc-950/60 hover:bg-zinc-900 border border-zinc-850 text-zinc-300 hover:text-white rounded-xl text-sm font-medium transition-all cursor-pointer text-center"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-purple-650 hover:bg-purple-550 text-white rounded-xl text-sm font-medium shadow-lg shadow-purple-950/20 transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-purple-650 hover:bg-purple-550 text-white rounded-xl text-sm font-medium shadow-lg shadow-purple-950/20 transition-all cursor-pointer disabled:opacity-50 disabled:pointer-events-none text-center"
           >
             {loading ? (
               <>
