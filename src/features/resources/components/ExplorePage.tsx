@@ -44,6 +44,7 @@ export default function ExplorePage() {
   const [selectedType, setSelectedType] = useState<string>('');
   const [newCount, setNewCount] = useState(0);
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState<'text' | 'image' | 'video'>('text');
 
   const [offset, setOffset] = useState(0);
   const limit = 12;
@@ -57,11 +58,16 @@ export default function ExplorePage() {
     setNewCount(0);
   };
 
-  // Resetear paginación al cambiar filtros
+  // Resetear paginación al cambiar filtros o pestaña
   useEffect(() => {
     setOffset(0);
     setAllResources([]);
-  }, [search, selectedCategory, selectedType]);
+  }, [search, selectedCategory, selectedType, activeTab]);
+
+  // Resetear sub-tipo al cambiar de pestaña
+  useEffect(() => {
+    setSelectedType('');
+  }, [activeTab]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -100,12 +106,24 @@ export default function ExplorePage() {
 
   // Cargar recursos con filtros
   const { data: resourcesData, isLoading, isFetching } = useQuery<{ data: Resource[]; meta: { total: number } }>({
-    queryKey: ['resources', search, selectedCategory, selectedType, offset],
+    queryKey: ['resources', search, selectedCategory, selectedType, activeTab, offset],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       if (selectedCategory) params.append('categoryId', selectedCategory);
-      if (selectedType) params.append('type', selectedType);
+      
+      if (activeTab === 'text') {
+        if (selectedType) {
+          params.append('type', selectedType);
+        } else {
+          params.append('types', 'prompt_llm,agent,workflow,other');
+        }
+      } else if (activeTab === 'image') {
+        params.append('type', 'prompt_image');
+      } else if (activeTab === 'video') {
+        params.append('type', 'prompt_video');
+      }
+
       params.append('limit', String(limit));
       params.append('offset', String(offset));
 
@@ -156,6 +174,45 @@ export default function ExplorePage() {
           </div>
         </div>
 
+        {/* Pestañas de la Galería (Segmented Pills Control) */}
+        <div className="flex justify-center border-b border-zinc-900/60 pb-4">
+          <div className="flex bg-zinc-900/40 p-1 border border-zinc-900 rounded-2xl backdrop-blur-sm shadow-xl">
+            <button
+              onClick={() => setActiveTab('text')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                activeTab === 'text'
+                  ? 'bg-purple-650 text-white shadow-lg shadow-purple-950/40 scale-[1.02]'
+                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/30'
+              }`}
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>Texto y Lógica</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('image')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                activeTab === 'image'
+                  ? 'bg-purple-650 text-white shadow-lg shadow-purple-950/40 scale-[1.02]'
+                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/30'
+              }`}
+            >
+              <ImageIcon className="h-4 w-4" />
+              <span>Imágenes</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('video')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                activeTab === 'video'
+                  ? 'bg-purple-650 text-white shadow-lg shadow-purple-950/40 scale-[1.02]'
+                  : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/30'
+              }`}
+            >
+              <Video className="h-4 w-4" />
+              <span>Videos</span>
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           {/* Filtros Lateral (Escritorio) o superiores (Móvil) */}
           <aside className="w-full lg:w-64 flex-shrink-0 bg-zinc-900/10 border border-zinc-900 backdrop-blur-sm p-4 lg:p-6 rounded-2xl transition-all duration-200">
@@ -168,7 +225,7 @@ export default function ExplorePage() {
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4 text-purple-400" />
                 <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Filtros</h2>
-                {(selectedType || selectedCategory) && (
+                {((activeTab === 'text' && selectedType) || selectedCategory) && (
                   <span className="flex h-1.5 w-1.5 rounded-full bg-purple-500 animate-pulse" />
                 )}
               </div>
@@ -181,66 +238,59 @@ export default function ExplorePage() {
             </div>
 
             <div className={`${showFiltersMobile ? 'block' : 'hidden'} lg:block space-y-6 pt-4 lg:pt-6`}>
-              {/* Tipos */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-semibold text-zinc-300">Tipo de Recurso</h3>
-                <div className="flex flex-col gap-1 text-sm">
-                  <button
-                    onClick={() => setSelectedType('')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      selectedType === '' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                    }`}
-                  >
-                    <Layers className="h-4 w-4" />
-                    <span>Todos</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedType('prompt_llm')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      selectedType === 'prompt_llm' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                    }`}
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    <span>Prompts LLM</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedType('prompt_image')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      selectedType === 'prompt_image' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                    }`}
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                    <span>Imágenes</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedType('prompt_video')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      selectedType === 'prompt_video' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                    }`}
-                  >
-                    <Video className="h-4 w-4" />
-                    <span>Videos</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedType('agent')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      selectedType === 'agent' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                    }`}
-                  >
-                    <Box className="h-4 w-4" />
-                    <span>Agentes</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedType('workflow')}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
-                      selectedType === 'workflow' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50'
-                    }`}
-                  >
-                    <Box className="h-4 w-4" />
-                    <span>Workflows</span>
-                  </button>
+              {/* Tipos (Solo visible en pestaña Texto y Lógica) */}
+              {activeTab === 'text' && (
+                <div className="space-y-3">
+                  <h3 className="text-xs font-semibold text-zinc-300">Tipo de Recurso</h3>
+                  <div className="flex flex-col gap-1 text-sm">
+                    <button
+                      onClick={() => setSelectedType('')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                        selectedType === '' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/50'
+                      }`}
+                    >
+                      <Layers className="h-4 w-4" />
+                      <span>Todos</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedType('prompt_llm')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                        selectedType === 'prompt_llm' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/50'
+                      }`}
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      <span>Prompts LLM</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedType('agent')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                        selectedType === 'agent' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/50'
+                      }`}
+                    >
+                      <Box className="h-4 w-4" />
+                      <span>Agentes</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedType('workflow')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                        selectedType === 'workflow' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/50'
+                      }`}
+                    >
+                      <Box className="h-4 w-4" />
+                      <span>Workflows</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedType('other')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
+                        selectedType === 'other' ? 'bg-purple-950/20 border border-purple-900/30 text-purple-400 font-medium' : 'text-zinc-450 hover:text-zinc-200 hover:bg-zinc-900/50'
+                      }`}
+                    >
+                      <Box className="h-4 w-4" />
+                      <span>Otros</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Categorías */}
               <div className="space-y-3">

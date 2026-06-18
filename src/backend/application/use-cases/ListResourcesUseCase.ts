@@ -5,6 +5,7 @@ export interface ListResourcesInput {
   search?: string;
   categoryId?: string | null;
   type?: string | null;
+  types?: string[] | null;
   authorId?: string | null;
   status?: string | null;
   limit?: number;
@@ -19,6 +20,7 @@ export class ListResourcesUseCase {
       search: input.search || undefined,
       categoryId: input.categoryId || undefined,
       type: input.type || undefined,
+      types: input.types || undefined,
       authorId: input.authorId || undefined,
       status: input.status || undefined,
       limit: input.limit !== undefined ? input.limit : 20,

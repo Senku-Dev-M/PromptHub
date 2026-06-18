@@ -238,6 +238,8 @@ export class SupabaseResourceRepository implements IResourceRepository {
     }
     if (filters.type) {
       query = query.eq('type', filters.type as any);
+    } else if (filters.types && filters.types.length > 0) {
+      query = query.in('type', filters.types as any);
     }
     if (filters.authorId) {
       query = query.eq('author_id', filters.authorId);

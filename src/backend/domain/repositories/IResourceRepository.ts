@@ -4,6 +4,7 @@ export interface FindManyFilters {
   search?: string;
   categoryId?: string;
   type?: string;
+  types?: string[];
   authorId?: string;
   authorIds?: string[];
   status?: string;

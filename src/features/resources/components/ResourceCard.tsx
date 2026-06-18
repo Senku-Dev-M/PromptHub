@@ -150,7 +150,7 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
         {showImageHeader && (
           <Link
             href={`/resource/${resource.slug}`}
-            className="block relative w-full h-44 overflow-hidden rounded-xl bg-zinc-950 border border-zinc-850 shadow-inner group/preview"
+            className="block relative w-full aspect-video overflow-hidden rounded-xl bg-zinc-950 border border-zinc-850 shadow-inner group/preview"
           >
             {imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element

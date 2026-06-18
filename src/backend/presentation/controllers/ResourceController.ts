@@ -201,6 +201,8 @@ export class ResourceController {
       const search = searchParams.get('search') || undefined;
       const categoryId = searchParams.get('categoryId') || undefined;
       const type = searchParams.get('type') || undefined;
+      const typesStr = searchParams.get('types') || undefined;
+      const types = typesStr ? typesStr.split(',') : undefined;
       const authorId = searchParams.get('authorId') || undefined;
       const status = searchParams.get('status') || undefined;
       
@@ -213,6 +215,7 @@ export class ResourceController {
         search,
         categoryId,
         type,
+        types,
         authorId,
         status,
         limit,
