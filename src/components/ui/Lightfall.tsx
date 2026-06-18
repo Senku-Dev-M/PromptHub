@@ -111,7 +111,8 @@ vec2 sceneC(vec2 frag, vec2 r) {
   return vec2(O.x, atan(O.z, O.y));
 }
 
-void mainImage(out vec4 o, vec2 C) {
+void mainImage(out vec4 o, vec2 fragCoord) {
+  vec2 C = fragCoord;
   vec2 r = iResolution.xy;
   vec2 uv0 = (C + C - r) / r.x;
   float T = 0.1 * iTime * uSpeed + 9.0;
@@ -223,9 +224,19 @@ export default function Lightfall({
   const rendererRef = useRef<any>(null);
   const mouseTargetRef = useRef<[number, number]>([0, 0]);
   const lastTimeRef = useRef<number>(0);
+  const [errorLog, setErrorLog] = React.useState<string | null>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
+    const handleError = (e: ErrorEvent) => {
+      setErrorLog((prev) => (prev ? prev + '\n' : '') + `GLOBAL ERROR: ${e.message}`);
+    };
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const container = containerRef.current;
     if (!container) return;
 
     const renderer = new Renderer({
@@ -354,6 +365,10 @@ export default function Lightfall({
       meshRef.current = null;
       rendererRef.current = null;
     };
+  } catch (err: any) {
+      console.error(err);
+      setErrorLog((prev) => (prev ? prev + '\n' : '') + `OGL INITIALIZATION ERROR: ${err?.message || err}`);
+    }
   }, [
     dpr,
     paused,
@@ -382,6 +397,16 @@ export default function Lightfall({
       style={{
         ...(mixBlendMode && { mixBlendMode })
       }}
-    />
+    >
+      {errorLog && (
+        <div 
+          className="absolute top-4 left-4 right-4 bg-red-950/90 text-red-200 border border-red-800 p-4 rounded-xl text-xs font-mono whitespace-pre-wrap z-50 pointer-events-auto max-h-60 overflow-y-auto"
+          style={{ mixBlendMode: 'normal' }}
+        >
+          <div className="font-bold text-red-400 mb-1">Lightfall Debug Log:</div>
+          {errorLog}
+        </div>
+      )}
+    </div>
   );
 }

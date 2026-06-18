@@ -56,30 +56,33 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Container con efecto de fondo Lightfall */}
-      <div className="relative overflow-hidden w-full border-b border-zinc-900/60">
+      <div className="relative overflow-hidden w-full border-b border-zinc-900/60 min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center z-0">
         <div className="absolute inset-0 -z-10">
           <Lightfall
             colors={['#A6C8FF', '#5227FF', '#FF9FFC']}
-            backgroundColor="#090514"
-            speed={0.25}
-            streakCount={4}
-            streakWidth={1.0}
-            streakLength={1.4}
-            glow={1.1}
-            density={0.65}
-            twinkle={0.8}
-            zoom={2.2}
-            backgroundGlow={0.25}
-            opacity={0.8}
+            backgroundColor="#07030e"
+            speed={0.15}
+            streakCount={2}
+            streakWidth={0.8}
+            streakLength={1.0}
+            glow={0.8}
+            density={0.3}
+            twinkle={0.5}
+            zoom={2.5}
+            backgroundGlow={0.15}
+            opacity={0.45}
             mouseInteraction={true}
-            mouseStrength={0.5}
-            mouseRadius={1.0}
+            mouseStrength={0.4}
+            mouseRadius={0.8}
           />
         </div>
+        {/* Máscara radial oscura en el centro para maximizar contraste de lectura */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#07030e_35%,transparent_80%)] pointer-events-none -z-10 opacity-85" />
+
         {/* Desvanecido suave al final del hero */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-950 to-transparent pointer-events-none z-10" />
 
-        <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pt-32 sm:pb-28 text-center space-y-6 relative z-20">
+        <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center space-y-6 relative z-20">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent max-w-4xl mx-auto leading-none">
             El Hub de Prompts de IA de Próxima Generación
           </h1>
@@ -181,31 +184,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Sección: Estadísticas */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="bg-gradient-to-r from-purple-950/10 via-zinc-900/20 to-indigo-950/10 border border-zinc-900 rounded-2xl p-8 backdrop-blur-sm">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center divide-y sm:divide-y-0 sm:divide-x divide-zinc-900">
-            <div className="space-y-1.5 py-4 sm:py-0">
-              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
-                +10,000
-              </p>
-              <p className="text-xs font-medium text-zinc-450 uppercase tracking-wider">Prompts Copiados</p>
-            </div>
-            <div className="space-y-1.5 py-4 sm:py-0">
-              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
-                +5,000
-              </p>
-              <p className="text-xs font-medium text-zinc-450 uppercase tracking-wider">Creadores de Prompts</p>
-            </div>
-            <div className="space-y-1.5 py-4 sm:py-0">
-              <p className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-emerald-400 to-purple-400 bg-clip-text text-transparent">
-                100%
-              </p>
-              <p className="text-xs font-medium text-zinc-450 uppercase tracking-wider">Gratuito y Abierto</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Prompts Destacados */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8 relative z-10">
