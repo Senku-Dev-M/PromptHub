@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { SupabaseResourceRepository } from '@/backend/infrastructure/supabase/SupabaseResourceRepository';
 import { SupabaseProfileRepository } from '@/backend/infrastructure/supabase/SupabaseProfileRepository';
@@ -80,6 +81,38 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
       if (authorProfile) {
         isFollowing = await followRepo.exists(currentUser.id, authorProfile.id);
       }
+    }
+
+    // 5. Registrar visualización (evitando spameo mediante hash de IP por 1 hora)
+    try {
+      const headersList = await headers();
+      const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || '127.0.0.1';
+      const encoder = new TextEncoder();
+      const dataBuffer = encoder.encode(ip);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const ipHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const { data: recentViews } = await supabase
+        .from('resource_views')
+        .select('id')
+        .eq('resource_id', resource.id)
+        .eq('ip_hash', ipHash)
+        .gt('created_at', oneHourAgo)
+        .limit(1);
+
+      if (!recentViews || recentViews.length === 0) {
+        await supabase
+          .from('resource_views')
+          .insert({
+            resource_id: resource.id,
+            viewer_id: currentUser?.id || null,
+            ip_hash: ipHash,
+          });
+      }
+    } catch (viewError) {
+      console.error('Error al registrar visualización:', viewError);
     }
   } catch (error) {
     console.error('Error al recuperar detalle del recurso:', error);
