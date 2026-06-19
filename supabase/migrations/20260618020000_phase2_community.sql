@@ -50,7 +50,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS on_follow_inserted_deleted ON public.follows;
 CREATE TRIGGER on_follow_inserted_deleted

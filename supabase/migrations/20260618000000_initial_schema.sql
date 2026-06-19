@@ -245,7 +245,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER on_like_inserted_deleted
     AFTER INSERT OR DELETE ON public.likes
@@ -262,7 +262,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER on_save_inserted_deleted
     AFTER INSERT OR DELETE ON public.saved_resources
@@ -279,7 +279,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER on_comment_inserted_deleted
     AFTER INSERT OR DELETE ON public.comments
@@ -297,7 +297,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER on_collection_resource_inserted_deleted
     AFTER INSERT OR DELETE ON public.collection_resources
@@ -315,7 +315,7 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE TRIGGER on_resource_tag_inserted_deleted
     AFTER INSERT OR DELETE ON public.resource_tags

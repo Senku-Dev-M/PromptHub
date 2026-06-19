@@ -20,6 +20,8 @@ export class NotificationController {
           commentId: n.commentId,
           isRead: n.isRead,
           createdAt: n.createdAt,
+          notifier: n.notifier,
+          resource: n.resource,
         })),
         error: null,
         meta: { timestamp: new Date().toISOString() }
