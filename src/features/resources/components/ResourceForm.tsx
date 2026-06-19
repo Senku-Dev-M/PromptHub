@@ -84,10 +84,26 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
   }, [initialData]);
 
   // Manejo de chips de modelos compatibles
+  const handleModelChange = (val: string) => {
+    if (val.includes(',')) {
+      const parts = val.split(',');
+      const chipsToAdd = parts.slice(0, -1)
+        .map(p => p.trim())
+        .filter(p => p !== '' && !compatibleModels.includes(p));
+      
+      if (chipsToAdd.length > 0) {
+        setCompatibleModels([...compatibleModels, ...chipsToAdd]);
+      }
+      setModelInput(parts[parts.length - 1]);
+    } else {
+      setModelInput(val);
+    }
+  };
+
   const handleModelAdd = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ',') && modelInput.trim()) {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      const cleanInput = modelInput.trim().replace(/,$/, '');
+      const cleanInput = modelInput.trim();
       if (cleanInput && !compatibleModels.includes(cleanInput)) {
         setCompatibleModels([...compatibleModels, cleanInput]);
       }
@@ -100,8 +116,38 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
   };
 
   // Manejo de chips de tags
+  const handleTagChange = (val: string) => {
+    if (val.includes(',')) {
+      const parts = val.split(',');
+      const chipsToAdd: string[] = [];
+      
+      let currentTagsCount = tags.length;
+      const cleanParts = parts.slice(0, -1).map(p => 
+        p.trim().toLowerCase().replace(/[^a-z0-9-]/g, '')
+      );
+
+      for (const tag of cleanParts) {
+        if (tag && !tags.includes(tag) && !chipsToAdd.includes(tag)) {
+          if (currentTagsCount + chipsToAdd.length >= 5) {
+            setErrorMsg('No puedes añadir más de 5 etiquetas.');
+            break;
+          }
+          chipsToAdd.push(tag);
+        }
+      }
+
+      if (chipsToAdd.length > 0) {
+        setTags([...tags, ...chipsToAdd]);
+        setErrorMsg(null);
+      }
+      setTagInput(parts[parts.length - 1]);
+    } else {
+      setTagInput(val);
+    }
+  };
+
   const handleTagAdd = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       const cleanInput = tagInput.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
       if (cleanInput && !tags.includes(cleanInput)) {
@@ -395,7 +441,7 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
             <input
               type="text"
               value={modelInput}
-              onChange={(e) => setModelInput(e.target.value)}
+              onChange={(e) => handleModelChange(e.target.value)}
               onKeyDown={handleModelAdd}
               placeholder="Ej. GPT-4o, Claude 3.5 Sonnet..."
               className="w-full px-4 py-3 bg-zinc-950/70 border border-zinc-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-zinc-100 placeholder-zinc-650 outline-none text-sm transition-all"
@@ -425,7 +471,7 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
             <input
               type="text"
               value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
+              onChange={(e) => handleTagChange(e.target.value)}
               onKeyDown={handleTagAdd}
               placeholder="Ej. seo, copy, redaccion..."
               className="w-full px-4 py-3 bg-zinc-950/70 border border-zinc-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl text-zinc-100 placeholder-zinc-650 outline-none text-sm transition-all"
