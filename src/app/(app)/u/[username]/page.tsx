@@ -46,7 +46,28 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
       status: 'published',
       limit: 100,
     });
-    resources = result.resources;
+    resources = result.resources.map(res => ({
+      id: res.id,
+      title: res.title,
+      slug: res.slug,
+      description: res.description,
+      type: res.type,
+      status: res.status,
+      compatibleModels: res.compatibleModels,
+      viewsCount: res.viewsCount,
+      likesCount: res.likesCount,
+      savesCount: res.savesCount,
+      commentsCount: res.commentsCount,
+      tags: res.tags,
+      createdAt: res.createdAt instanceof Date ? res.createdAt.toISOString() : res.createdAt,
+      exampleOutput: res.exampleOutput,
+      files: res.files ? res.files.map(f => ({
+        id: f.id,
+        fileUrl: f.fileUrl,
+        fileType: f.fileType,
+        fileSize: f.fileSize,
+      })) : [],
+    }));
     totalResources = result.total;
 
     // 4. Obtener usuario autenticado y comprobar estado de seguimiento
