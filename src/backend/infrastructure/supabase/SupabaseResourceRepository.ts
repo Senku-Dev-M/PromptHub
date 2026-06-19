@@ -61,27 +61,47 @@ export class SupabaseResourceRepository implements IResourceRepository {
 
     if (!tags || tags.length === 0) return;
 
-    // 2. Insertar etiquetas en la tabla tags. Usamos upsert.
-    const tagInserts = tags.map(name => {
-      const cleanName = name.trim().toLowerCase();
-      return {
-        name: cleanName,
-        slug: cleanName.replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
-      };
-    });
+    const cleanNames = tags.map(name => name.trim().toLowerCase());
 
-    const { data: insertedTags, error: tagError } = await this.client
+    // 2. Buscar etiquetas que ya existen
+    const { data: existingTags, error: selectError } = await this.client
       .from('tags')
-      .upsert(tagInserts, { onConflict: 'name' })
-      .select('id, name');
+      .select('id, name')
+      .in('name', cleanNames);
 
-    if (tagError) {
-      throw new Error(`Error registrando etiquetas: ${tagError.message}`);
+    if (selectError) {
+      throw new Error(`Error consultando etiquetas existentes: ${selectError.message}`);
     }
 
-    // 3. Crear nuevas relaciones en resource_tags
-    if (insertedTags && insertedTags.length > 0) {
-      const relationInserts = insertedTags.map(t => ({
+    const existingNames = new Set(existingTags?.map(t => t.name) || []);
+    const missingNames = cleanNames.filter(name => !existingNames.has(name));
+
+    let allTags = [...(existingTags || [])];
+
+    // 3. Insertar solo las etiquetas faltantes
+    if (missingNames.length > 0) {
+      const tagInserts = missingNames.map(name => ({
+        name,
+        slug: name.replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
+      }));
+
+      const { data: newTags, error: insertError } = await this.client
+        .from('tags')
+        .insert(tagInserts)
+        .select('id, name');
+
+      if (insertError) {
+        throw new Error(`Error insertando etiquetas nuevas: ${insertError.message}`);
+      }
+
+      if (newTags) {
+        allTags = allTags.concat(newTags);
+      }
+    }
+
+    // 4. Crear nuevas relaciones en resource_tags
+    if (allTags.length > 0) {
+      const relationInserts = allTags.map(t => ({
         resource_id: resourceId,
         tag_id: t.id,
       }));

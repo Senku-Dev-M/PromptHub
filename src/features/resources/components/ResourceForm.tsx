@@ -207,6 +207,30 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
     setLoading(true);
     setErrorMsg(null);
 
+    // Auto-agregar modelo pendiente si el usuario no presionó Enter
+    let finalCompatibleModels = [...compatibleModels];
+    if (modelInput.trim()) {
+      const cleanInput = modelInput.trim().replace(/,$/, '');
+      if (cleanInput && !finalCompatibleModels.includes(cleanInput)) {
+        finalCompatibleModels.push(cleanInput);
+        setCompatibleModels(finalCompatibleModels);
+        setModelInput('');
+      }
+    }
+
+    // Auto-agregar etiqueta pendiente si el usuario no presionó Enter
+    let finalTags = [...tags];
+    if (tagInput.trim()) {
+      const cleanInput = tagInput.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+      if (cleanInput && !finalTags.includes(cleanInput)) {
+        if (finalTags.length < 5) {
+          finalTags.push(cleanInput);
+          setTags(finalTags);
+          setTagInput('');
+        }
+      }
+    }
+
     const url = isEdit ? `/api/v1/resources/${initialData.id}` : '/api/v1/resources';
     const method = isEdit ? 'PATCH' : 'POST';
 
@@ -223,10 +247,10 @@ export default function ResourceForm({ initialData, isEdit = false }: ResourceFo
           type,
           status,
           categoryId: categoryId || null,
-          compatibleModels,
+          compatibleModels: finalCompatibleModels,
           exampleInput: exampleInput || null,
           exampleOutput: exampleOutput || null,
-          tags,
+          tags: finalTags,
           files,
         }),
       });
