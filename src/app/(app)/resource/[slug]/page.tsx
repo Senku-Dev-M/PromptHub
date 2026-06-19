@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
+import LocalTime from '@/components/ui/LocalTime';
 import { SupabaseResourceRepository } from '@/backend/infrastructure/supabase/SupabaseResourceRepository';
 import { SupabaseProfileRepository } from '@/backend/infrastructure/supabase/SupabaseProfileRepository';
 import { SupabaseLikeRepository } from '@/backend/infrastructure/supabase/SupabaseLikeRepository';
@@ -119,11 +120,7 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
     return notFound();
   }
 
-  const formattedDate = new Date(resource.createdAt).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950 text-zinc-100">
@@ -168,7 +165,7 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
 
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4 text-zinc-600" />
-              Publicado el {formattedDate}
+              Publicado el <LocalTime date={resource.createdAt} format="long" />
             </span>
 
             <span className="flex items-center gap-1">

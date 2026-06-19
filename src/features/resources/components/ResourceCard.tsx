@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Sparkles, Image as ImageIcon, Video, Box, Eye, Heart, Calendar } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import ResourceSaveButton from './ResourceSaveButton';
+import LocalTime from '@/components/ui/LocalTime';
 
 export interface ResourceCardProps {
   resource: {
@@ -72,11 +73,7 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
   const config = typeConfig[resource.type] || typeConfig.other;
   const TypeIcon = config.icon;
 
-  const formattedDate = new Date(resource.createdAt).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
+
 
   // Buscar URL de imagen en exampleOutput o archivos adjuntos
   let imageUrl: string | null = null;
@@ -194,7 +191,7 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
           </span>
           <span className="text-zinc-500 flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5" />
-            {formattedDate}
+            <LocalTime date={resource.createdAt} format="short" />
           </span>
         </div>
 
