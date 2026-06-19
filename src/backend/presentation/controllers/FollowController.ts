@@ -22,7 +22,10 @@ export class FollowController {
 
       const result = await this.toggleFollowUseCase.execute(followerId, targetProfile.id);
       return Response.json({
-        data: result,
+        data: {
+          followed: result.followed,
+          following: result.followed,
+        },
         error: null,
         meta: { timestamp: new Date().toISOString() }
       }, { status: 200 });

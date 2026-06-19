@@ -67,6 +67,16 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
       ? res.resource_tags.map((rt: any) => rt.tags?.name).filter(Boolean)
       : [];
 
+    const files = res.resource_files
+      ? res.resource_files.map((rf: any) => ({
+          id: rf.id,
+          fileUrl: rf.file_url,
+          fileType: rf.file_type,
+          fileSize: rf.file_size,
+          sortOrder: rf.sort_order,
+        }))
+      : [];
+
     return {
       id: res.id,
       title: res.title,
@@ -81,6 +91,8 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
       commentsCount: res.comments_count || 0,
       tags,
       createdAt: res.created_at,
+      exampleOutput: res.example_output,
+      files,
     };
   });
 

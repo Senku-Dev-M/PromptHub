@@ -23,6 +23,13 @@ interface Resource {
   commentsCount: number;
   tags: string[];
   createdAt: string;
+  exampleOutput?: string | null;
+  files?: Array<{
+    id?: string;
+    fileUrl: string;
+    fileType?: string | null;
+    fileSize?: number | null;
+  }> | null;
 }
 
 export default function FeedPage() {

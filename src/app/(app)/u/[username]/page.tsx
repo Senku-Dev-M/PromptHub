@@ -203,6 +203,8 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
                     commentsCount: res.commentsCount,
                     tags: res.tags,
                     createdAt: res.createdAt,
+                    exampleOutput: res.exampleOutput,
+                    files: res.files,
                   }}
                 />
               ))}

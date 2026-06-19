@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { UserPlus, UserMinus, Loader2 } from 'lucide-react';
 
 interface FollowButtonProps {
@@ -16,6 +17,7 @@ export default function FollowButton({
   hasUser,
   onFollowChange,
 }: FollowButtonProps) {
+  const router = useRouter();
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
@@ -40,8 +42,10 @@ export default function FollowButton({
       if (!res.ok) {
         throw new Error(payload.error?.message || 'Error al procesar el follow.');
       }
-      setFollowing(payload.data.following);
-      if (onFollowChange) onFollowChange(payload.data.following);
+      const followingState = payload.data.following ?? payload.data.followed;
+      setFollowing(followingState);
+      if (onFollowChange) onFollowChange(followingState);
+      router.refresh();
     } catch (err) {
       console.error(err);
       setFollowing(prevFollowing);
