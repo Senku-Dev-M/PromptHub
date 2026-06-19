@@ -7,8 +7,8 @@ import { SupabaseFollowRepository } from '@/backend/infrastructure/supabase/Supa
 import { GetProfileUseCase } from '@/backend/application/use-cases/GetProfileUseCase';
 import { ListResourcesUseCase } from '@/backend/application/use-cases/ListResourcesUseCase';
 import Navbar from '@/components/layout/Navbar';
-import ResourceCard from '@/features/resources/components/ResourceCard';
 import FollowButton from '@/features/profile/components/FollowButton';
+import ProfilePrompts from '@/features/profile/components/ProfilePrompts';
 import { Globe, Calendar, Sparkles } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
 
@@ -185,30 +185,7 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
           </div>
 
           {resources.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {resources.map((res) => (
-                <ResourceCard
-                  key={res.id}
-                  resource={{
-                    id: res.id,
-                    title: res.title,
-                    slug: res.slug,
-                    description: res.description,
-                    type: res.type,
-                    status: res.status,
-                    compatibleModels: res.compatibleModels,
-                    viewsCount: res.viewsCount,
-                    likesCount: res.likesCount,
-                    savesCount: res.savesCount,
-                    commentsCount: res.commentsCount,
-                    tags: res.tags,
-                    createdAt: res.createdAt,
-                    exampleOutput: res.exampleOutput,
-                    files: res.files,
-                  }}
-                />
-              ))}
-            </div>
+            <ProfilePrompts resources={resources} />
           ) : (
             <div className="text-center py-16 bg-zinc-900/10 border border-dashed border-zinc-850 rounded-2xl">
               <p className="text-zinc-550 text-sm">Este creador aún no ha publicado ningún prompt.</p>
